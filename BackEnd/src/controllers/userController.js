@@ -9,10 +9,62 @@ var supervisor = 'supervisor';
 var path = require('path');
 var fs = require('fs');
 
+function crearUsuario(req, res){
+    var user = new User();
+    var params = req.body;
+
+    if(req.user.role==admin || req.user.role==supervisor){
+
+        if(params.name && params.lastname && params.email && params.password && params.company && params.job && params.area){
+            user.name = params.name;
+            user.lastname = params.lastname;
+            user.email = params.email;
+            user.password = params.password;
+            user.company = req.user.company;
+            user.job = params.job;
+            user.area = params.area;
+            user.role = 'user';
+            user.level = 0;
+            user.image = null;
+            user.number = 0;
+            user.rewards = [];
+            User.find({$or: [
+                {email: user.email.toLowerCase()},
+                {email: user.email.toUpperCase()},
+            ]}).exec((err, users)=>{
+                if(err) return res.status(500).send({message: 'Error en la peticion de usaurio'});
+
+                if(users && users.length >= 1){
+                    return res.status(500).send({message: 'El usuario ya existe en el sistema'});
+                }else{
+                    bcrypt.hash(params.password, null, null, (err, hash)=>{
+                        user.password = hash;
+
+                        user.save((err, userSaved)=>{
+                            if(err) return res.status(500).send({message: 'Error al guardar al usuario'});
+
+                            if(userSaved){
+                                res.status(200).send({user: userSaved});
+                            }else{
+                                res.status(404).send({message: 'No se ha podido registrar al usuario'});
+                            }
+                        });
+                    });
+                }
+            });
+        }else{
+            res.status(200).send({message: 'Rellene todos los campos necesarios'});
+        }
+    }else{
+        res.status(200).send({message: 'No eres admin o supervisor para realizar esta acción'});
+    }
+}
+
 function registrar(req, res){
     var user = new User();
     var params = req.body;
-        if(params.name && params.lastname && params.email && params.password && params.company && params.job && params.area){
+
+        if(params.name && params.lastname && params.email && params.password  && params.job && params.area && params.role){
             user.name = params.name;
             user.lastname = params.lastname;
             user.email = params.email;
@@ -20,10 +72,10 @@ function registrar(req, res){
             user.company = params.company;
             user.job = params.job;
             user.area = params.area;
-            user.role = 'user';
+            user.role = params.role;
             user.level = 0;
             user.image = null;
-            user.number = 0;
+            user.number = params.number;
             user.rewards = [];
             User.find({$or: [
                 {email: user.email.toLowerCase()},
@@ -90,65 +142,28 @@ function login(req, res){
     });
 }
 
+function getUser(req, res){
 
-function listarUsuarios(req, res){
-    if(req.user.role==admin || req.user.role==supervisor){
-        User.find().exec((err, usersFindeds)=>{
-            if(err) return res.status(500).send({message:'Error en la Peticion'})
-            if(!usersFindeds) return res.status(404).send({message:'No se encontraron Usuarios'})
-            return res.status(200).send({users: usersFindeds})
-        })
-    }    
+    var userId = req.params.id;
+    var params = req.body;
+    
+    
+    User.findById(userId, params, {new: true}, (err, userEnc)=>{
+        if(err) return res.status(500).send({message: 'Error en la Petición'});
+    
+        if(!userEnc) return res.status(404).send({message: 'No se ha podido Listar los Datos del Partido'});
+    
+        return res.status(200).send({user: userEnc});
+    });
 }
 
 
-function crearUsuario(req, res){
-    var user = new User();
-    var params = req.body;
-    if(req.user.role==admin || req.user.role==supervisor){
-        if(params.name && params.lastname && params.email && params.password  && params.job && params.area && params.role){
-            user.name = params.name;
-            user.lastname = params.lastname;
-            user.email = params.email;
-            user.password = params.password;
-            user.company = req.user.company;
-            user.job = params.job;
-            user.area = params.area;
-            user.role = params.role;
-            user.level = 0;
-            user.image = null;
-            user.number = params.number;
-            user.rewards = [];
-            User.find({$or: [
-                {email: user.email.toLowerCase()},
-                {email: user.email.toUpperCase()},
-            ]}).exec((err, users)=>{
-                if(err) return res.status(500).send({message: 'Error en la peticion de usaurio'});
-
-                if(users && users.length >= 1){
-                    return res.status(500).send({message: 'El usuario ya existe en el sistema'});
-                }else{
-                    bcrypt.hash(params.password, null, null, (err, hash)=>{
-                        user.password = hash;
-
-                        user.save((err, userSaved)=>{
-                            if(err) return res.status(500).send({message: 'Error al guardar al usuario'});
-
-                            if(userSaved){
-                                res.status(200).send({user: userSaved});
-                            }else{
-                                res.status(404).send({message: 'No se ha podido registrar al usuario'});
-                            }
-                        });
-                    });
-                }
-            });
-        }else{
-            res.status(200).send({message: 'Rellene todos los campos necesarios'});
-        }
-    }else{
-        res.status(200).send({message: 'No eres admin o supervisor para realizar esta acción'});
-    }
+function getUsers(req, res){
+    User.find().exec((err, usersEnc)=>{
+        if(err) return res.status(500).send({message:'Error en la Peticion'})
+        if(!usersEnc) return res.status(404).send({message:'No se encontraron Usuarios'})
+        return res.status(200).send({users: usersEnc})
+    }) 
 }
 
 
@@ -172,19 +187,6 @@ function editarUsuario(req, res){
     }
 }
 
-function update(req, res){
-    var params = req.body
-    var userId = req.params.id
-
-    User.updateOne(userId, params, {new:true},(err, userUpdated)=>{
-        if(err){
-            res.status(500).send({message: 'Error en la peticion'});
-        }else if(userUpdated){
-            res.status(200).send({userUpdated});
-        }
-    });
-
-}
 
 function eliminarUsuario(req, res){
     var userId = req.params.id;
@@ -270,8 +272,8 @@ function obtenerImagenUser(req, res) {
 module.exports = {
     registrar,
     login,
-    update,
-    listarUsuarios,
+    getUser,
+    getUsers,
     crearUsuario,
     editarUsuario,
     eliminarUsuario,
