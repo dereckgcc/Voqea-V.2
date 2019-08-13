@@ -1,0 +1,87 @@
+<app-navbar></app-navbar>
+<div class="p-3 mb-2 bg-danger text-light">
+  <div class="row justify-content-md-center">
+    <div class="col-md-auto">
+      <form #editUserForm="ngForm" (ngSubmit)="editUser(user._id)">
+        <div class="form-group">
+          <img src="{{ url + 'obtener-imagen-usuario/'+ user.image}}" class="rounded-circle" width="200" height="200"
+            *ngIf="user.image">
+          <img src="./assets/user.png" class="rounded-circle mx-auto d-block" width="200" height="200"
+            *ngIf="!user.image">
+          <br>
+        </div>
+
+
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" name="name" #name="ngModel" [(ngModel)]="user.name" class="form-control" id="name"
+            placeholder="Name">
+        </div>
+
+        <div class="form-group">
+          <label for="lastname">LastName</label>
+          <input type="text" name="lastname" #lastname="ngModel" [(ngModel)]="user.lastname" class="form-control"
+            id="lastname" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="Email">Email</label>
+          <input type="email" name="email" #email="ngModel" [(ngModel)]="user.email" class="form-control" id="Email"
+            readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="rol">Rol</label>
+          <input type="text" name="rol" #rol="ngModel" [(ngModel)]="user.rol" class="form-control" id="rol"
+            readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="job">Job</label>
+          <input type="text" name="job" #job="ngModel" [(ngModel)]="user.job" class="form-control" id="job"
+            readonly>
+        </div>
+
+
+        <div>
+          <label for="number" class="col-form-label">Number</label>
+          <div class="form-group input-group-prepend">
+            <div class="input-group-text">+502</div>
+            <input type="number" class="form-control number" id="number" name="number" #number="ngModel"
+              [(ngModel)]="user.number" readonly>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="company">Company</label>
+          <input type="text" name="company" #company="ngModel" [(ngModel)]="user.company" class="form-control"
+            id="company" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="area">Area</label>
+          <input type="text" name="area" #area="ngModel" [(ngModel)]="user.area" class="form-control" id="area"
+            readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="Level">level</label>
+          <input type="text" name="level" #level="ngModel" [(ngModel)]="user.level" class="form-control" id="level"
+            readonly>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" (change)="fileChangeEvent($event)" class="custom-file-input" id="inputGroupFile01"
+              aria-describedby="inputGroupFileAddon01">
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
