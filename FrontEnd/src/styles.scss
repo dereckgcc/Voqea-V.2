@@ -1,1 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
+.content{
+    padding: 30px;
+    background-image: url()
+}
+
+
+nav{
+    background: #ccd6e6;
+}
+
+.cardUser{
+    display: inline-block;
+    margin: 10px;
+    border: 2px solid black;
+    background: black;
+    color: white;
+    border-radius: 10px;
+    
+}
+
+.logo{
+    padding: 5px;
+    width: 100%;
+    height: 300px;
+   
+}
+
+.logo:hover {
+    opacity: .2;
+    transform: scale(1.2);
+    transition: 1.5;
+}
+
+.cardImage .btn{
+    display:block;
+    position: relative;
+      
+}
+
+.verUser{
+    transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  text-align: center;
+}
+
+
+
+.cardImage:hover .verUser{
+    opacity: 1;
+    display: block;
+    
+}
+
+.cardImage{
+    overflow: hidden;
+
+}
