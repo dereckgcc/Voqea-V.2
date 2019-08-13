@@ -51,19 +51,39 @@ export class UserService {
     return this._http.post(this.url + 'registrar', params, {headers: headers});
   }
 
-  updateUser(user: User): Observable<any>{
+  crearUsuario(user: User, token):Observable<any>{
     let params = JSON.stringify(user);
-    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 
-    return this._http.put(this.url + 'editarUsuario/' + user._id, params, {headers: headers})
+    return this._http.post(this.url + 'crear-usuario', params, {headers: headers});
+  }
+
+  getUsers():Observable<any>{
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return this._http.get(this.url + 'users', {headers:headers})
+  }
+
+   getUser(id):Observable<any>{
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return this._http.get(this.url + 'user/' + id, {headers:headers})
+
+  }
+
+  updateUser(user: User, token, id): Observable<any>{
+    let params = JSON.stringify(user);
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+    return this._http.put(this.url + 'editar-usuario/' + id, params, {headers: headers})
 
   }
   
-  deleteUser(user: User):Observable<any>{
+  deleteUser(user: User, token, id):Observable<any>{
   
-    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 
-    return this._http.delete(this.url + 'eliminarUsuario/' + user._id, {headers:headers})
+    return this._http.delete(this.url + 'eliminar-usuario/' + id, {headers:headers})
   }
 
   
