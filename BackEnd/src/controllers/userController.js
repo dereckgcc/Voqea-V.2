@@ -13,7 +13,7 @@ function crearUsuario(req, res){
     var user = new User();
     var params = req.body;
 
-    if(req.user.role==admin || req.user.role==supervisor){
+    if(req.user.rol==admin || req.user.rol==supervisor){
 
         if(params.name && params.lastname && params.email && params.password && params.company && params.job && params.area){
             user.name = params.name;
@@ -23,11 +23,11 @@ function crearUsuario(req, res){
             user.company = req.user.company;
             user.job = params.job;
             user.area = params.area;
-            user.role = 'user';
+            user.rol = 'user';
             user.level = 0;
             user.image = null;
             user.number = 0;
-            user.rewards = [];
+            user.rewards = params.rewards;
             User.find({$or: [
                 {email: user.email.toLowerCase()},
                 {email: user.email.toUpperCase()},
@@ -64,7 +64,7 @@ function registrar(req, res){
     var user = new User();
     var params = req.body;
 
-        if(params.name && params.lastname && params.email && params.password  && params.job && params.area && params.role){
+        if(params.name && params.lastname && params.email && params.password  && params.job && params.area && params.rol){
             user.name = params.name;
             user.lastname = params.lastname;
             user.email = params.email;
@@ -72,11 +72,11 @@ function registrar(req, res){
             user.company = params.company;
             user.job = params.job;
             user.area = params.area;
-            user.role = params.role;
+            user.rol = params.rol;
             user.level = 0;
             user.image = null;
             user.number = params.number;
-            user.rewards = [];
+            user.rewards = params.rewards;
             User.find({$or: [
                 {email: user.email.toLowerCase()},
                 {email: user.email.toUpperCase()},
@@ -119,11 +119,11 @@ function login(req, res){
             bcrypt.compare(clave, user.password, (err, check)=>{
                 if(check){
                     if(params.getToken){
-                        if(user.role == admin){
+                        if(user.rol == admin){
                             return res.status(200).send({token: jwt.createToken(user)});
-                        }else if(user.role == usuarios){
+                        }else if(user.rol == usuarios){
                             return res.status(200).send({token: jwt.createToken(user)});
-                        }else if(user.role == supervisor){
+                        }else if(user.rol == supervisor){
                             return res.status(200).send({token: jwt.createToken(user)});
                         }else{
                             return res.status(200).send({message: 'Usted no es parte del sistema'});
@@ -172,7 +172,7 @@ function editarUsuario(req, res){
     var params = req.body;
     delete params.password;
 
-    if(req.user.role==admin || req.user.role==supervisor){
+    if(req.user.rol==admin || req.user.rol==supervisor){
 
         User.findByIdAndUpdate(userId, params, {new:true}, (err, userUpdated)=>{
             if(err) return res.status(500).send({message: 'Error en la petición'});
@@ -190,9 +190,9 @@ function editarUsuario(req, res){
 
 function eliminarUsuario(req, res){
     var userId = req.params.id;
-    var rolId = req.params.role;
+    var rolId = req.params.rol;
 
-    if(req.user.role==admin || req.user.role==supervisor){
+    if(req.user.rol==admin || req.user.rol==supervisor){
 
         if(userId == req.user.sub){
             return res.status(200).send({message: 'No puede eliminar su propio perfil'});
