@@ -12,10 +12,11 @@ var api = express.Router();
 //USERS
 api.post('/registrar', UserController.registrar);
 api.post('/login', UserController.login);
-api.get('/listarUsuarios', mdAuth.ensureAuth, UserController.listarUsuarios);
-api.post('/crearUsuario', mdAuth.ensureAuth, UserController.crearUsuario);
-api.put('/editarUsuario/:id', mdAuth.ensureAuth, UserController.editarUsuario);
-api.delete('/eliminarUsuario/:id', mdAuth.ensureAuth, UserController.eliminarUsuario);
+api.get('/usuario/:id', UserController.getUser);
+api.get('/usuarios', UserController.getUsers);
+api.post('/crear-usuario', mdAuth.ensureAuth, UserController.crearUsuario);
+api.put('/editar-usuario/:id', mdAuth.ensureAuth, UserController.editarUsuario);
+api.delete('/eliminar-usuario/:id', mdAuth.ensureAuth, UserController.eliminarUsuario);
 api.post('/subir-imagen-usuario/:id', md_subir, UserController.subirImagenUser);
 api.get('/obtener-imagen-usuario/:nombreImagen', UserController.obtenerImagenUser);
 
