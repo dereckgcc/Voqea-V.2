@@ -5,13 +5,13 @@ export class User{
         public lastname: String,
         public email: String,
         public password: String,
-        public role: String,
+        public rol: String,
         public image: String,
         public job: String,
         public number: Number,
         public company: String,
         public area: String,
         public level: Number,
-        public rewards: []
+        public rewards: String
     ){}
 }
