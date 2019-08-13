@@ -61,13 +61,13 @@ export class UserService {
   getUsers():Observable<any>{
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    return this._http.get(this.url + 'users', {headers:headers})
+    return this._http.get(this.url + 'usuarios', {headers:headers})
   }
 
    getUser(id):Observable<any>{
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    return this._http.get(this.url + 'user/' + id, {headers:headers})
+    return this._http.get(this.url + 'usuario/' + id, {headers:headers})
 
   }
 
