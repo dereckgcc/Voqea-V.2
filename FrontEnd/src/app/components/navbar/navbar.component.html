@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Voqea |</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+  
+       
+        <!-- SI NO ESTA LOGEADO -->
+  
+        <li class="nav-item" *ngIf="!identity">
+          <a class="nav-link" [routerLink]="['/login']">Login</a>
+        </li>
+  
+        <!-- SOLO SI ESTA LOGUEADO -->
+
+        <li class="nav-item" *ngIf="identity">
+          <a class="nav-link" [routerLink]="['/perfil']">{{identity.name}}</a>
+        </li>
+
+        <li class="nav-item" *ngIf="identity">
+            <a class="nav-link" [routerLink]="['/home']">Asignacion</a>
+          </li>
+      </ul>
+    </div>
+  </nav>
