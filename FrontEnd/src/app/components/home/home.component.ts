@@ -1,6 +1,8 @@
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { User } from 'src/app/models/user.model'
+import { User } from 'src/app/models/user.model';
+import { Task } from 'src/app/models/task.model';
+import { TaskService } from 'src/app/services/task.service';
 import { Router } from '@angular/router';
 import { GLOBAL } from 'src/app/services/global.service';
 
@@ -8,40 +10,47 @@ import { GLOBAL } from 'src/app/services/global.service';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  providers: [UserService]
+  providers: [UserService, TaskService]
 })
 export class HomeComponent implements OnInit {
   @ViewChild('formAddUser')formValuesAddUser;
+  @ViewChild('formAddTask')formValuesAddTask;
   
-  public status;
+  public status: String;
   public url;
   public identity;
   public token;
 
-  public user:User;
-  public userModel : User
+  public users:User;
+  public usuariosModel : User
+
+  public tasks : Task;
+  public taskModel: Task;
 
 
   constructor(
     private _router: Router,
-    private _userService: UserService
+    private _userService: UserService,
+    private _taskService: TaskService
   ) { 
     this.url = GLOBAL.url;
     this.identity = this._userService.getIdentity();
     this.token = this._userService.getToken();
-    this.user = new User ("","","","","","user","","",0,"","",0,"")
+    this.usuariosModel = new User ("","","","","","user","","",0,"","",0,"");
+    this.taskModel= new Task("","","","",0,{withoutStarting:0, inAction:0,finished:0})
   }
 
   ngOnInit() {
     this.getUsers();
+    this.getTasks();
   }
 
   getUsers(){
-    this._userService.getUsers().subscribe(
+    this._userService.getUsers(this.token).subscribe(
       response=>{
         if(response.users){
           console.log(response.users);
-          this.user = response.users;
+          this.users = response.users;
         }
       },
       error=>{
@@ -59,7 +68,7 @@ export class HomeComponent implements OnInit {
       response =>{
         if(response.user){
           console.log(response.user)
-          this.userModel = response.user;
+          this.usuariosModel = response.user;
         }
       },
       error =>{
@@ -73,11 +82,11 @@ export class HomeComponent implements OnInit {
   }
 
 
-  crearUsuario(){
-    this._userService.crearUsuario(this.user, this.token).subscribe(
+  registro(){
+    this._userService.registro(this.usuariosModel, this.token).subscribe(
       response=>{
         if(response){
-          console.log(response.user)
+          console.log(response.users)
           this.formValuesAddUser.resetForm();
           this.getUsers();
           this.status =  'ok'
@@ -91,9 +100,9 @@ export class HomeComponent implements OnInit {
   }
 
   editUser(id){
-    this._userService.updateUser(this.userModel,this.token, id ).subscribe(
+    this._userService.updateUser(this.usuariosModel,this.token, id ).subscribe(
       response=>{
-        if(!response.userModel){
+        if(!response.usuariosModel){
           console.log(response);
           this.getUsers();
           this.status = 'ok';
@@ -110,7 +119,7 @@ export class HomeComponent implements OnInit {
   }
 
   deleteUser(id){
-    this._userService.deleteUser(this.userModel, this.token, id).subscribe(
+    this._userService.deleteUser(this.usuariosModel, this.token, id).subscribe(
       response => {
         if (response) {   
           this.getUsers();     
@@ -130,43 +139,43 @@ export class HomeComponent implements OnInit {
 
 
   setId(_id: String){
-    this.userModel._id = _id;
+    this.usuariosModel._id = _id;
   }
 
   setName(name: String){
-    this.userModel.name = name
+    this.usuariosModel.name = name
   }
 
   setLastName(lastname: String){
-    this.userModel.lastname = lastname
+    this.usuariosModel.lastname = lastname
   }
 
   setEmail(email: String){
-    this.userModel.email = email
+    this.usuariosModel.email = email
   }
 
   setRol(rol: String){
-    this.userModel.rol = rol
+    this.usuariosModel.rol = rol
   }
 
   setJob(job: String){
-    this.userModel.job = job
+    this.usuariosModel.job = job
   }
 
   setNumber(number: Number){
-    this.userModel.number = number
+    this.usuariosModel.number = number
   }
 
   setCompany(company: String){
-    this.userModel.company = company
+    this.usuariosModel.company = company
   }
 
   setArea(area: String){
-    this.userModel.area = area
+    this.usuariosModel.area = area
   }
 
   setLevel(level: Number){
-    this.userModel.level = level
+    this.usuariosModel.level = level
   }
 
   limpiarForm(){
@@ -174,6 +183,127 @@ export class HomeComponent implements OnInit {
   }
 
 
+  /*///////////////////////////-----------------TASK---------------------------////////////////////////////*/ 
+
+
+  getTasks(){
+    this._taskService.getTasks().subscribe(
+      response=>{
+        if(response.tasks){
+          console.log(response.tasks);
+          this.tasks = response.tasks;
+        }
+      },
+      error=>{
+        var errorMessage = <any>error;
+        console.log(errorMessage);
+        if(errorMessage !=null){
+          this.status = 'error'
+        }
+      }
+    )
+  }
+
+  getTask(id){
+    this._taskService.getTask(id).subscribe(
+      response =>{
+        if(response.task){
+          console.log(response.task)
+          this.taskModel = response.task;
+        }
+      },
+      error =>{
+        var erroMessage = <any>error;
+        console.log(erroMessage);
+        if (erroMessage != null) {
+          this.status = 'error';
+        }
+      }
+    )
+  }
+
+  addTask(id){
+    this._taskService.addTask(this.taskModel,this.token,id).subscribe(
+      response=>{
+        if(response.task){
+          console.log(response.task);
+          this.formValuesAddTask.resetForm();
+          this.getTasks();
+          this.status = 'ok'
+        }
+      },
+      error=>{
+        var errorMessage = <any>error;
+        console.log(errorMessage);
+        if(errorMessage !=null){
+          this.status = 'error'
+        }
+      }
+    )
+  }
+
+  editTask(id){
+    this._taskService.updateTask(this.taskModel,this.token, id ).subscribe(
+      response=>{
+        if(!response.taskModel){
+          console.log(response);
+          this.getTasks();
+          this.status = 'ok';
+        }
+      },
+      error=>{
+        var errorMessage = <any>error;
+        console.log(errorMessage);
+        if(errorMessage != null){
+          this.status = 'error'
+        }
+      }
+    )
+  }
+
+  deleteTask(id){
+    this._taskService.deleteTask(this.taskModel, this.token,id).subscribe(
+      response => {
+        if (response) {   
+          this.getTasks();     
+          this.status = 'ok';
+          console.log(response);
+        }
+      },
+      error => {
+        var erroMessage = <any>error;
+        console.log(erroMessage);
+        if (erroMessage != null) {
+          this.status = 'error';
+        }
+      }
+    )
+  }
+
+
+  limpiarFormT(){
+    this.formValuesAddUser.resetForm();
+  }
+  
+  setIdT(_id: String){
+    this.taskModel._id = _id;
+  }
+
+  setTitle(title: String){
+    this.taskModel.title = title;
+  }
+
+  setDescription(description: String){
+    this.taskModel.description = description
+  }
+
+  setMaker(maker: String){
+    this.taskModel.maker = maker
+  }
+
+  setScore(score: Number){
+    this.taskModel.score = score
+  }
 
 
 }
