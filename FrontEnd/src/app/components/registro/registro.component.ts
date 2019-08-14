@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class RegistroComponent implements OnInit {
   public user:User;
   public status;
-
+public token;
 
   constructor(
     private _router: Router,
@@ -25,7 +25,7 @@ export class RegistroComponent implements OnInit {
   }
 
   registrar(){
-    this._userService.registro(this.user).subscribe(
+    this._userService.registro(this.user, this.token).subscribe(
       response=>{
         if(response){
           this.status =  'ok'
