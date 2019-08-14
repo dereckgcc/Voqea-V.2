@@ -10,7 +10,7 @@ var api = express.Router();
 
 //Tasks
 api.get('/tasks', TaskController.getTasks);
-api.get('/task/:id', md_auth.ensureAuth, TaskController.getTask);
+api.get('/task/:id',TaskController.getTask);
 api.post('/add-task/:id',md_auth.ensureAuth, TaskController.addTask);
 api.put('/edit-task/:id', md_auth.ensureAuth, TaskController.editTask);
 api.delete('/delete-task/:id', md_auth.ensureAuth, TaskController.deleteTask);
