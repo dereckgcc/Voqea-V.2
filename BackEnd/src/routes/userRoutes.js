@@ -13,7 +13,7 @@ var api = express.Router();
 api.post('/registrar', UserController.registrar);
 api.post('/login', UserController.login);
 api.get('/usuario/:id', UserController.getUser);
-api.get('/usuarios', UserController.getUsers);
+api.get('/usuarios',mdAuth.ensureAuth, UserController.getUsers);
 api.post('/crear-usuario', mdAuth.ensureAuth, UserController.crearUsuario);
 api.put('/editar-usuario/:id', mdAuth.ensureAuth, UserController.editarUsuario);
 api.delete('/eliminar-usuario/:id', mdAuth.ensureAuth, UserController.eliminarUsuario);
