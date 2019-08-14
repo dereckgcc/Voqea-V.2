@@ -2,6 +2,7 @@ import { Component, OnInit,ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/user.model';
 import { Task } from 'src/app/models/task.model';
+import { Reward } from 'src/app/models/reward.model'
 import { TaskService } from 'src/app/services/task.service';
 import { Router } from '@angular/router';
 import { GLOBAL } from 'src/app/services/global.service';
@@ -15,6 +16,7 @@ import { GLOBAL } from 'src/app/services/global.service';
 export class HomeComponent implements OnInit {
   @ViewChild('formAddUser')formValuesAddUser;
   @ViewChild('formAddTask')formValuesAddTask;
+  @ViewChild('formAddReward')formValuesAddReward;
   
   public status: String;
   public url;
@@ -27,6 +29,9 @@ export class HomeComponent implements OnInit {
   public tasks : Task;
   public taskModel: Task;
 
+  public rewards: Reward;
+  public rewardModel: Reward;
+
 
   constructor(
     private _router: Router,
@@ -37,12 +42,14 @@ export class HomeComponent implements OnInit {
     this.identity = this._userService.getIdentity();
     this.token = this._userService.getToken();
     this.usuariosModel = new User ("","","","","","user","","",0,"","",0,"");
-    this.taskModel= new Task("","","","",0,{withoutStarting:0, inAction:0,finished:0})
+    this.taskModel= new Task("","","","",0,{withoutStarting:0, inAction:0,finished:0});
+    this.rewardModel = new Reward("","reward1","")
   }
 
   ngOnInit() {
     this.getUsers();
     this.getTasks();
+    this.getRewards();
   }
 
   getUsers(){
@@ -83,7 +90,7 @@ export class HomeComponent implements OnInit {
 
 
   registro(){
-    this._userService.registro(this.usuariosModel, this.token).subscribe(
+    this._userService.registro2(this.usuariosModel, this.token).subscribe(
       response=>{
         if(response){
           console.log(response.users)
@@ -304,6 +311,46 @@ export class HomeComponent implements OnInit {
   setScore(score: Number){
     this.taskModel.score = score
   }
+
+///////////////////////////
+  getRewards(){
+    this._taskService.getRewards().subscribe(
+      response=>{
+        if(response.rewards){
+          console.log(response.rewards);
+          this.rewards = response.rewards;
+        }
+      },
+      error=>{
+        var errorMessage = <any>error;
+        console.log(errorMessage);
+        if(errorMessage !=null){
+          this.status = 'error'
+        }
+      }
+    )
+  }
+
+  addReward(id){
+    this._taskService.addReward(this.rewardModel,this.token,id).subscribe(
+      response=>{
+        if(response.reward){
+          console.log(response.reward);
+          this.formValuesAddReward.resetForm();
+          this.getRewards();
+          this.status = 'ok'
+        }
+      },
+      error=>{
+        var errorMessage = <any>error;
+        console.log(errorMessage);
+        if(errorMessage !=null){
+          this.status = 'error'
+        }
+      }
+    )
+  }
+
 
 
 }
