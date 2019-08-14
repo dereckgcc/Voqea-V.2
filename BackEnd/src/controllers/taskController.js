@@ -125,9 +125,6 @@ function addReward(req, res){
             ]}).exec((err, rewards) =>{
                 if(err) return res.status(500).send({message: 'Error en la peticion'});
     
-                if(rewards && rewards.length >= 1){
-                    return res.status(500).send({message: 'Rewardya existe en el sistema'});
-                }else{
                     reward.save((err, rewardGuardado)=>{
                         if(err) return res.status(500).send({message: 'Error al Guardar Task'});
     
@@ -137,7 +134,7 @@ function addReward(req, res){
                                 res.status(404).send({message: 'No se ha Podido Registrar the Task'});
                         }
                     })
-                }
+                
             })
         }else {
             res.status(200).send({message: 'Rellene todos los datos necesarios'});
