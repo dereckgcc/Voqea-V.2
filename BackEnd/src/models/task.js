@@ -7,7 +7,7 @@ var TaskSchema = Schema({
     title: String,
     description: String,
     maker: {type: Schema.ObjectId, ref: 'User'},
-    score: Number,//{type: Schema.ObjectId, ref: 'Level'},
+    score: Number,
     state:{
         withOutStarting: Number,
         inAction: Number,
