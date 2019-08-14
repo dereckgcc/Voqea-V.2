@@ -46,18 +46,19 @@ export class UserService {
 
   registro(user: User,token):Observable<any>{
     let params = JSON.stringify(user);
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return this._http.post(this.url + 'registrar', params, {headers: headers});
+  }
+
+  registro2(user: User,token):Observable<any>{
+    let params = JSON.stringify(user);
     let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 
     return this._http.post(this.url + 'registrar', params, {headers: headers});
   }
 
-  crearUsuario(user: User, token):Observable<any>{
-    let params = JSON.stringify(user);
-    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
-
-    return this._http.post(this.url + 'crear-usuario', params, {headers: headers});
-  }
-
+  
   getUsers(token):Observable<any>{
     let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 
