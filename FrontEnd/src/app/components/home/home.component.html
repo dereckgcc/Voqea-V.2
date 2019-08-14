@@ -58,17 +58,12 @@
                     <h5 class="card-text">Description: {{tas.description}}</h5>
                     <h5 class="card-text">Score: {{tas.score}}</h5>
                     <h6 class="card-text">Maker: {{tas.maker}}</h6>
-                    <button class="btn btn-success btn-block" data-toggle="modal" data-target="#modalAddReward">Agregar
-                        Reward</button>
+                    <button class="btn btn-success btn-block" data-toggle="modal" data-target="#modalAddReward"
+                    (click)="getTask(tas._id)">Agregar Reward</button>
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
 
 </div>
 
@@ -496,11 +491,11 @@
     </div>
 </div>
 
-<!-- Modal Reward -->
+<!----------------------------- Modal Reward --------------------------------------------->
 <div class="modal fade" id="modalAddReward" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form #formAddReward="ngForm" (ngSubmit)="getTasks()">
+        <form #formAddReward="ngForm" (ngSubmit)="addReward(taskModel._id);getRewards()">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Reward</h5>
@@ -533,8 +528,6 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-
-
 
                 </div>
                 <div class="modal-footer">
