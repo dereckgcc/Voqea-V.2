@@ -10,7 +10,7 @@ function addTask(req, res){
     var params = req.body;
     var userId = req.params.id
 
-    if(req.user.role == admin || req.user.role == supervisor){
+    
         if (params.title && params.description) {
             task.title = params.title;
             task.description = params.description;
@@ -48,12 +48,9 @@ function addTask(req, res){
         }else {
             res.status(200).send({message: 'Rellene todos los datos necesarios'});
             }
-        }else{
-            return res.status(200).send('Solo los Administradores y Supervisores pueden Agregar Tasks ');  
-        }
+        
        
 }
-
 
 function getTask(req, res){
 
@@ -70,12 +67,12 @@ function getTask(req, res){
 }
 
 function getTasks(req, res) {
-    Task.find().populate('admin').exec((err, tasks) => {
+    Task.find().populate('task').exec((err, tasks) => {
             if (err) return res.status(500).send({ message: 'Error in Task' })
             if (!tasks) return res.status(500).send({ message: 'Error to list Task' })
 
             return res.status(200).send({ tasks });
-        }) //con el populate le decimos a que columna queremos que vaya y busque
+        }) 
 }
 
 
@@ -87,32 +84,27 @@ function editTask(req, res){
 
     delete params.password;
 
-    if(req.user.role == admin || req.user.role == supervisor){
+    
         Task.findByIdAndUpdate(taskId, params, {new:true}, (err, taskUpdated)=>{
             if(err) return res.status(500).send({message: 'Request error'}) 
             if(!taskUpdated) return res.status(404).send({message: 'The task could not be updated'})
             return res.status(200).send({ task: taskUpdated })
     
         });
-    } else {
-        return res.status(200).send('Advertencia, necesita permisos de Administrador o Supervisor'); 
-    }
-
 }
 
 function deleteTask(req, res){
     var taskId = req.params.id;
 
-    if(req.user.role == admin || req.user.role == supervisor){
-            Task.findByIdAndDelete(taskId,(err, taskDeleted)=>{
-                if(err) return res.status(500).send({message: 'Request error'});     
-                if(!taskDeleted) return res.status(404).send({message: 'Incorrect ID'});                
-                if (err) return next(err);
-                res.send('Task deleted');
-            });
-        } else {
-            return res.status(200).send('Advertencia, necesita permisos de Administrador o Supervisor');
-        }   
+    
+    Task.findByIdAndDelete(taskId,(err, taskDeleted)=>{
+        if(err) return res.status(500).send({message: 'Error en la petición'});
+
+        if(!taskDeleted) return res.status(404).send({message: 'No se han podido eliminar los datos del usuario'});
+
+        if(err) return next(err);
+        res.status(200).send({message: 'Eliminado correctamente'});
+    })
 }
 
 function changeState(req, res){
