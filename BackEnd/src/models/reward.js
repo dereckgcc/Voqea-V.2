@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var RewardSchema = Schema({
     name: String,
-    image: String
+    user: {type: Schema.ObjectId, ref: 'Task'}
 });
 
 module.exports = mongoose.model('Reward', RewardSchema);
