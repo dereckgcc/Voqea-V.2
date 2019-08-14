@@ -4,9 +4,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var RewardSchema = Schema({
-    name: Number,
-    image: String,
-    level: {type: Schema.ObjectId, ref: 'Level'}
+    name: String,
+    image: String
 });
 
 module.exports = mongoose.model('Reward', RewardSchema);
