@@ -1,6 +1,7 @@
 'use strict'
 
 var Task = require('../models/task');
+var Reward = require('../models/reward');
 var admin = 'admin';
 var supervisor = 'supervisor'
 
@@ -48,7 +49,6 @@ function addTask(req, res){
         }else {
             res.status(200).send({message: 'Rellene todos los datos necesarios'});
             }
-        
        
 }
 
@@ -107,45 +107,53 @@ function deleteTask(req, res){
     })
 }
 
-function changeState(req, res){
+function addReward(req, res){
+    var reward = new Reward();
     var params = req.body;
-    var taskId = req.params.id;
-    var opcion = params.opcion;
+    var taskId = req.params.id
 
-    Task.findById(taskId, (err,taskUpdated)=>{
-        if(err) return res.status(500).send({message:'Request error,err'})
-        if(taskUpdated){
-            console.log(taskUpdated.state.withOutStarting);
-            console.log(opcion);
-
-            switch (opcion) {
-                case '1':
-                        taskUpdated.state.withOutStarting = 1;
-                        taskUpdated.state.inAction = 0;
-                        taskUpdated.state.finished = 0;
-                        break;
-                case '2':
-                        taskUpdated.state.withOutStarting = 0;
-                        taskUpdated.state.inAction = 1;
-                        taskUpdated.state.finished = 0;
-                        break;
-                case '3':
-                        taskUpdated.state.withOutStarting = 0;
-                        taskUpdated.state.inAction = 0;
-                        taskUpdated.state.finished = 1;                  
-                    break;
-            
-                default:
-                        taskUpdated.state.withOutStarting = 1;
-                        taskUpdated.state.inAction = 0;
-                        taskUpdated.state.finished = 0;
-                    break;
+    
+        if (params.name) {
+            reward.name = params.name;
+            reward.user = taskId;
+       
+        
+            Reward.find({ $or: [
+                {name: reward.name.toLowerCase()},
+                {name: reward.name.toUpperCase()}
+        
+            ]}).exec((err, rewards) =>{
+                if(err) return res.status(500).send({message: 'Error en la peticion'});
+    
+                if(rewards && rewards.length >= 1){
+                    return res.status(500).send({message: 'Rewardya existe en el sistema'});
+                }else{
+                    reward.save((err, rewardGuardado)=>{
+                        if(err) return res.status(500).send({message: 'Error al Guardar Task'});
+    
+                        if(rewardGuardado){
+                                res.status(200).send({reward: rewardGuardado});
+                        }else{
+                                res.status(404).send({message: 'No se ha Podido Registrar the Task'});
+                        }
+                    })
+                }
+            })
+        }else {
+            res.status(200).send({message: 'Rellene todos los datos necesarios'});
             }
-            taskUpdated.save();
-            return res.status(200).send({Task:taskUpdated});
-        }
-    })
+       
 }
+
+function getRewards(req, res) {
+    Reward.find().populate('reward').exec((err, rewards) => {
+            if (err) return res.status(500).send({ message: 'Error in Task' })
+            if (!rewards) return res.status(500).send({ message: 'Error to list Task' })
+
+            return res.status(200).send({ rewards });
+        }) 
+}
+
 
 module.exports = {
     getTasks,
@@ -153,5 +161,7 @@ module.exports = {
     addTask,
     editTask,
     deleteTask,
-    changeState
+    addReward,
+    getRewards
+ 
 }
