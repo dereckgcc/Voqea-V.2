@@ -15,12 +15,12 @@ function crearUsuario(req, res){
 
     if(req.user.rol==admin || req.user.rol==supervisor){
 
-        if(params.name && params.lastname && params.email && params.password && params.company && params.job && params.area){
+        if(params.name && params.lastname && params.email ){
             user.name = params.name;
             user.lastname = params.lastname;
             user.email = params.email;
             user.password = params.password;
-            user.company = req.user.company;
+            user.company = params.company;
             user.job = params.job;
             user.area = params.area;
             user.rol = 'user';
@@ -159,11 +159,12 @@ function getUser(req, res){
 
 
 function getUsers(req, res){
-    User.find().exec((err, usersEnc)=>{
-        if(err) return res.status(500).send({message:'Error en la Peticion'})
-        if(!usersEnc) return res.status(404).send({message:'No se encontraron Usuarios'})
-        return res.status(200).send({users: usersEnc})
-    }) 
+    User.find().populate('user').exec((err, users)=>{
+        if(err) return res.status(500).send({message: 'error en partidos'})
+        if(!users) return res.status(400).send({message: 'Error al listar los partidos'})
+
+        return res.status(200).send({users});
+    });
 }
 
 
@@ -172,7 +173,7 @@ function editarUsuario(req, res){
     var params = req.body;
     delete params.password;
 
-    if(req.user.rol==admin || req.user.rol==supervisor){
+    
 
         User.findByIdAndUpdate(userId, params, {new:true}, (err, userUpdated)=>{
             if(err) return res.status(500).send({message: 'Error en la petición'});
@@ -181,10 +182,6 @@ function editarUsuario(req, res){
 
             return res.status(200).send({user: userUpdated});
         });
-
-    }else{
-        res.status(200).send({message: 'No eres admin o supervisor para realizar esta acción'});
-    }
 }
 
 
@@ -192,7 +189,7 @@ function eliminarUsuario(req, res){
     var userId = req.params.id;
     var rolId = req.params.rol;
 
-    if(req.user.rol==admin || req.user.rol==supervisor){
+    
 
         if(userId == req.user.sub){
             return res.status(200).send({message: 'No puede eliminar su propio perfil'});
@@ -209,9 +206,7 @@ function eliminarUsuario(req, res){
             })
         }
 
-    }else{
-        res.status(200).send({message: 'No eres admin o supervisor para realizar esta acción'});
-    }
+    
 }
 
 function subirImagenUser(req, res) {
