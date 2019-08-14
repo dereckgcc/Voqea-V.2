@@ -3,6 +3,7 @@ import { HttpHeaders,HttpClient  } from '@angular/common/http';
 import { GLOBAL } from './global.service';
 import { Observable } from 'rxjs';
 import { Task} from '../models/task.model'
+import { Reward } from '../models/reward.model'
 
 @Injectable()
 export class TaskService {
@@ -45,8 +46,18 @@ export class TaskService {
     return this._http.put(this.url + 'edit-task/' + id ,params, {headers:headers})
   }
 
+  addReward(reward:Reward, token, id ):Observable<any>{
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization',token);
+    let params = JSON.stringify(reward);
 
+    return this._http.post(this.url + 'add-reward/'+ id ,params, {headers:headers})
+  }
 
+  getRewards():Observable<any>{
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return this._http.get(this.url + 'rewards', {headers:headers})
+  }
 
 
 
